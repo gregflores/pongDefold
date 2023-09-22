@@ -1,0 +1,65 @@
+local function movePaddle(self, distance)
+	local pos = go.get_position()
+	pos.y = pos.y + distance
+	if pos.y < (self.bgSize.y - self.size.y * 0.5) and pos.y > (0 + self.size.y * 0.5) then
+		go.set_position(pos)
+	end
+end
+
+function init(self)
+	self.id = go.get_id()
+	self.size = go.get("#paddle", "size")
+	self.bgSize = go.get("/background#background", "size")
+	self.speed = 250
+	self.dir = 0
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	if self.dir then
+		local velocity = self.speed * self.dir
+		local distance = velocity * dt
+		movePaddle(self, distance)
+		self.dir = 0
+	end
+end
+
+function fixed_update(self, dt)
+	-- This function is called if 'Fixed Update Frequency' is enabled in the Engine section of game.project
+	-- Can be coupled with fixed updates of the physics simulation if 'Use Fixed Timestep' is enabled in
+	-- Physics section of game.project
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("player_left_up") and self.id == hash("/player_left") then
+		self.dir = 1
+	elseif action_id == hash("player_left_down") and self.id == hash("/player_left") then
+		self.dir = -1
+	elseif action_id == hash("player_right_up") and self.id == hash("/player_right") then
+		self.dir = 1
+	elseif action_id == hash("player_right_down") and self.id == hash("/player_right") then
+		self.dir = -1
+	end
+		
+	
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

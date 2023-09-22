@@ -1,0 +1,73 @@
+function resetBall(self)
+	local rot = vmath.quat_rotation_z(math.random() * 6.2831)
+	local baseDir = vmath.vector3(1,0,0)
+	self.dir = vmath.rotate(rot, baseDir)
+	print(self.dir)
+	self.dir = vmath.normalize(self.dir)
+	self.speed = self.startSpeed
+	go.set_position(self.startPos)
+end
+
+function init(self)
+	math.randomseed(1)
+	local rot = vmath.quat_rotation_z(math.random() * 6.2831)
+	local baseDir = vmath.vector3(1,0,0)
+	self.dir = vmath.rotate(rot, baseDir)
+	print(self.dir)
+	self.dir = vmath.normalize(self.dir)
+	self.startSpeed = 150
+	self.speed = self.startSpeed
+	self.startPos = go.get_position()
+
+	self.size = go.get("#sprite", "size")
+	self.bgSize = go.get("/background#background", "size")
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	local pos = go.get_position()
+	local distance = vmath.normalize(self.dir) * self.speed * dt
+	pos = pos + distance
+	if pos.y < (self.bgSize.y - self.size.y * 0.5) and pos.y > (0 + self.size.y * 0.5) and pos.x > (0 + self.size.x * 0.5) and pos.x < (self.bgSize.x - self.size.x * 0.5) then
+		go.set_position(pos)
+	elseif pos.y > (self.bgSize.y - self.size.y * 0.5) or pos.y < (0 + self.size.x * 0.5) then
+		self.dir.y = self.dir.y * -1
+	elseif pos.x > (self.bgSize.x - self.size.x * 0.5) then
+		msg.post("score#score", "player_left_score")
+		resetBall(self)
+	elseif pos.x < (0 + self.size.x * 0.5) then
+		msg.post("score#score", "player_right_score")
+		resetBall(self)
+	end
+	
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") then
+		self.dir.x = self.dir.x * -1
+		self.speed = self.speed * 1.05
+	end
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

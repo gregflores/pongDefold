@@ -1,3 +1,27 @@
+key_trigger {
+  input: KEY_W
+  action: "player_left_up"
+}
+key_trigger {
+  input: KEY_S
+  action: "player_left_down"
+}
+key_trigger {
+  input: KEY_UP
+  action: "player_right_up"
+}
+key_trigger {
+  input: KEY_DOWN
+  action: "player_right_down"
+}
+key_trigger {
+  input: KEY_D
+  action: "ball_launch_left"
+}
+key_trigger {
+  input: KEY_LEFT
+  action: "ball_launch_right"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_LEFT
   action: "touch"
