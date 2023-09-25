@@ -1,4 +1,4 @@
-name: "gameplay"
+name: "pvpGameplay"
 instances {
   id: "ball"
   prototype: "/main/gameobjects/ball.go"
