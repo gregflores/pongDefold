@@ -1,4 +1,4 @@
-tile_set: "/main/pong.atlas"
+tile_set: "/main/sprites/pong.atlas"
 default_animation: "pong_paddle"
 material: "/builtins/materials/sprite.material"
 blend_mode: BLEND_MODE_ALPHA

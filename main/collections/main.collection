@@ -1,70 +1,10 @@
 name: "main"
-instances {
-  id: "player_left"
-  prototype: "/main/player.go"
-  position {
-    x: 50.0
-    y: 360.0
-    z: 1.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "player_right"
-  prototype: "/main/player.go"
-  position {
-    x: 1230.0
-    y: 360.0
-    z: 1.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "ball"
-  prototype: "/main/ball.go"
-  position {
-    x: 640.0
-    y: 360.0
-    z: 1.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
 scale_along_z: 0
 embedded_instances {
   id: "go"
   data: "components {\n"
   "  id: \"main\"\n"
-  "  component: \"/main/main.script\"\n"
+  "  component: \"/main/scripts/pongMainMenu.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -99,14 +39,9 @@ embedded_instances {
 }
 embedded_instances {
   id: "background"
-  data: "embedded_components {\n"
-  "  id: \"background\"\n"
-  "  type: \"sprite\"\n"
-  "  data: \"tile_set: \\\"/main/pong.atlas\\\"\\n"
-  "default_animation: \\\"pong_bg\\\"\\n"
-  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
-  "blend_mode: BLEND_MODE_ALPHA\\n"
-  "\"\n"
+  data: "components {\n"
+  "  id: \"pongMainMenuBg\"\n"
+  "  component: \"/main/sprites/pongMainMenuBg.sprite\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -117,6 +52,8 @@ embedded_instances {
   "    y: 0.0\n"
   "    z: 0.0\n"
   "    w: 1.0\n"
+  "  }\n"
+  "  property_decls {\n"
   "  }\n"
   "}\n"
   ""
@@ -138,10 +75,10 @@ embedded_instances {
   }
 }
 embedded_instances {
-  id: "score"
+  id: "pongMainMenuGui"
   data: "components {\n"
-  "  id: \"score\"\n"
-  "  component: \"/main/score.gui\"\n"
+  "  id: \"pongMainMenu\"\n"
+  "  component: \"/main/guis/pongMainMenu.gui\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

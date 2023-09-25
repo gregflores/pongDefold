@@ -1,11 +1,32 @@
 function resetBall(self)
 	local rot = vmath.quat_rotation_z(math.random() * 6.2831)
 	local baseDir = vmath.vector3(1,0,0)
+	go.set_position(self.startPos)
 	self.dir = vmath.rotate(rot, baseDir)
 	print(self.dir)
 	self.dir = vmath.normalize(self.dir)
 	self.speed = self.startSpeed
-	go.set_position(self.startPos)
+end
+
+function moveBall(self, distance)
+	local pos = go.get_position()
+	pos = pos + distance
+	if pos.y > (self.bgMaxY - self.ballEdgeY) then
+		pos.y = (self.bgMaxY - self.ballEdgeY)
+		self.dir.y = self.dir.y * -1
+	elseif pos.y < (self.ballEdgeY) then
+		pos.y = self.ballEdgeY
+		self.dir.y = self.dir.y * -1
+	elseif pos.x > (self.bgMaxX - self.ballEdgeX) then
+		pos = self.startPos
+		if not self.scored then msg.post("score#score", "player_left_score") end
+		self.scored = true
+	elseif pos.x < (self.ballEdgeX) then
+		pos = self.startPos
+		if not self.scored then msg.post("score#score", "player_right_score") end
+		self.scored = true
+	end
+	go.set_position(pos)
 end
 
 function init(self)
@@ -15,12 +36,19 @@ function init(self)
 	self.dir = vmath.rotate(rot, baseDir)
 	print(self.dir)
 	self.dir = vmath.normalize(self.dir)
-	self.startSpeed = 150
+	self.startSpeed = 250
 	self.speed = self.startSpeed
 	self.startPos = go.get_position()
+	self.scored = false
 
 	self.size = go.get("#sprite", "size")
+	self.ballEdgeY = self.size.y * 0.5
+	self.ballEdgeX = self.size.x * 0.5
 	self.bgSize = go.get("/background#background", "size")
+	self.bgMaxY = self.bgSize.y
+	self.bgMaxX = self.bgSize.x
+	self.paddleSize = go.get("/player_right#paddle", "size")
+	self.paddleEdge = self.paddleSize.y * 0.5
 end
 
 function final(self)
@@ -30,27 +58,21 @@ function final(self)
 end
 
 function update(self, dt)
-	local pos = go.get_position()
-	local distance = vmath.normalize(self.dir) * self.speed * dt
-	pos = pos + distance
-	if pos.y < (self.bgSize.y - self.size.y * 0.5) and pos.y > (0 + self.size.y * 0.5) and pos.x > (0 + self.size.x * 0.5) and pos.x < (self.bgSize.x - self.size.x * 0.5) then
-		go.set_position(pos)
-	elseif pos.y > (self.bgSize.y - self.size.y * 0.5) or pos.y < (0 + self.size.x * 0.5) then
-		self.dir.y = self.dir.y * -1
-	elseif pos.x > (self.bgSize.x - self.size.x * 0.5) then
-		msg.post("score#score", "player_left_score")
-		resetBall(self)
-	elseif pos.x < (0 + self.size.x * 0.5) then
-		msg.post("score#score", "player_right_score")
-		resetBall(self)
+	if self.dir and not self.scored then
+		local velocity = self.speed * vmath.normalize(self.dir)
+		local distance = velocity * dt
+		moveBall(self, distance)
 	end
-	
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("collision_response") then
+	if message_id == hash("collision_response") and message.other_group == hash("paddle") then
+		local yDif = (go.get_position().y - message.other_position.y)
 		self.dir.x = self.dir.x * -1
+		self.dir.y = yDif / self.paddleEdge
 		self.speed = self.speed * 1.05
+	elseif message_id == hash("launch") and self.scored then
+		resetBall(self)
 	end
 end
 

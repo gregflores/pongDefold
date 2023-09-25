@@ -1,0 +1,68 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.pvpButton = gui.get_node("pvpButton")
+	self.pvaiButton = gui.get_node("pvaiButton")
+	self.pvpButtonHighlight = gui.get_node("pvpButtonHighlight")
+	self.pvaiButtonHighlight = gui.get_node("pvaiButtonHighlight")
+	self.pvpButtonAlpha = gui.get_alpha(self.pvpButtonHighlight)
+	self.pvaiButtonAlpha = gui.get_alpha(self.pvaiButtonHighlight)
+	self.isOverPvp = false
+	self.isOverPvai = false
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+end
+
+function on_input(self, action_id, action)
+	if action_id == nil then
+		if gui.pick_node(self.pvpButton, action.x, action.y) then
+			if not self.isOverPvp then
+				print("hovering PVP")
+				gui.set_alpha(self.pvpButtonHighlight, 1.0)
+				self.isOverPvp = true
+			end
+		elseif gui.pick_node(self.pvaiButton, action.x, action.y) then
+			if not self.isOverPvai then
+				print("hovering PVAI")
+				gui.set_alpha(self.pvaiButtonHighlight, 1.0)
+				self.isOverPvai = true
+			end
+		elseif self.isOverPvp then
+			print("Not hovering PVP")
+			gui.set_alpha(self.pvpButtonHighlight, self.pvpButtonAlpha)
+			self.isOverPvp = false
+		elseif self.isOverPvai then
+			print("Not hovering PVAI")
+			gui.set_alpha(self.pvaiButtonHighlight, self.pvaiButtonAlpha)
+			self.isOverPvai = false
+		end
+	end
+	if action_id == hash("touch") and action.pressed then
+		if gui.pick_node(self.pvpButton, action.x, action.y) then
+			print("PVP selected")
+		elseif gui.pick_node(self.pvaiButton, action.x, action.y) then
+			print("PVAI selected")
+		end
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

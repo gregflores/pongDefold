@@ -1,16 +1,22 @@
 local function movePaddle(self, distance)
 	local pos = go.get_position()
 	pos.y = pos.y + distance
-	if pos.y < (self.bgSize.y - self.size.y * 0.5) and pos.y > (0 + self.size.y * 0.5) then
-		go.set_position(pos)
+	if pos.y > (self.bgMaxY - self.paddleEdge) then
+		pos.y = self.bgMaxY - self.paddleEdge
+	elseif pos.y < (self.paddleEdge) then
+		pos.y = self.paddleEdge
 	end
+	go.set_position(pos)
 end
+
+go.property("paddleSpeed", 100)
 
 function init(self)
 	self.id = go.get_id()
 	self.size = go.get("#paddle", "size")
+	self.paddleEdge = self.size.y * 0.5
 	self.bgSize = go.get("/background#background", "size")
-	self.speed = 250
+	self.bgMaxY = self.bgSize.y
 	self.dir = 0
 end
 
@@ -22,7 +28,7 @@ end
 
 function update(self, dt)
 	if self.dir then
-		local velocity = self.speed * self.dir
+		local velocity = self.paddleSpeed * self.dir
 		local distance = velocity * dt
 		movePaddle(self, distance)
 		self.dir = 0
