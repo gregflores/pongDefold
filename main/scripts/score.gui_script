@@ -1,6 +1,12 @@
 function init(self)
+	msg.post(".", "acquire_input_focus")
 	self.score_left = 0
 	self.score_right = 0
+
+	self.exitButton = gui.get_node("exitButton")
+-- 	self.exitButtonHighlight = gui.get_node("exitButtonHighlight")
+-- 	self.exitButtonAlpha = gui.get_alpha(self.exitButtonHighlight)
+-- 	self.exitButtonColor = gui.get_color(self.exitButtonHighlight)
 end
 
 function final(self)
@@ -21,21 +27,29 @@ function on_message(self, message_id, message, sender)
 		gui.set_text(gui.get_node("score_text_left"), tostring(self.score_left))
 	elseif message_id == hash("player_right_score") then
 		self.score_right = self.score_right + 1
-		print(self. score_right)
 		gui.set_text(gui.get_node("score_text_right"), tostring(self.score_right))
+	elseif message_id == hash("pause") then
+		self.pause = message.pause
+		gui.set_enabled(gui.get_node("pauseMenu"), self.pause)
+		self.exitButton = gui.get_node("exitButton")
 	end
 end
 
 function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
+	if action_id == hash("touch") then 
+		if action.pressed then
+			if gui.pick_node(self.exitButton, action.x, action.y) then
+				-- gui.set_color(self.pvpButtonHighlight, vmath.vector3(0.7, 0.7, 0.7))
+				msg.post("main:/pongMainMenuGui#pongMainMenu", "showMainMenu")
+				msg.post("main:/loader#loader", "unloadLevel")
+			end
+		elseif action.released then
+			if gui.pick_node(self.exitButton, action.x, action.y) then
+				-- gui.set_color(self.pvpButtonHighlight, self.pvpButtonColor)
+				-- gui.set_alpha(self.pvpButtonHighlight, 1.0)
+			end
+		end
+	end
 end
 
 function on_reload(self)

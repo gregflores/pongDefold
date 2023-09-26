@@ -1,5 +1,6 @@
 function init(self)
 	msg.post(".", "acquire_input_focus")
+	self.loadedLevel = "#nothing"
 end
 
 function final(self)
@@ -10,8 +11,19 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("loadPvp") then
-		local proxy = "#pvpProxy"
+		self.loadedLevel = "#pvpProxy"
+		local proxy = self.loadedLevel
 		msg.post(proxy, "load")
+	elseif message_id == hash("loadPvai") then
+		self.loadedLevel = "#pvaiProxy"
+		local proxy = self.loadedLevel
+		msg.post(proxy, "load")
+	elseif message_id == hash("unloadLevel") then
+		local proxy = self.loadedLevel
+		msg.post(proxy, "disable")
+		msg.post(proxy, "final")
+		msg.post(proxy, "unload")
+		self.loadedLevel = "nothing"
 	elseif message_id == hash("proxy_loaded") then
 		msg.post(sender, "init")
 		msg.post(sender, "enable")

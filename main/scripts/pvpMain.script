@@ -1,0 +1,48 @@
+function init(self)
+	msg.post("player_left", "acquire_input_focus")
+	msg.post("player_right", "acquire_input_focus")
+	msg.post(".", "acquire_input_focus")
+	
+	self.pause = false
+end
+
+function final(self)
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function fixed_update(self, dt)
+	-- This function is called if 'Fixed Update Frequency' is enabled in the Engine section of game.project
+	-- Can be coupled with fixed updates of the physics simulation if 'Use Fixed Timestep' is enabled in
+	-- Physics section of game.project
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("pause_button") and action.pressed then
+		self.pause = not self.pause
+		local msgParam = {pause = self.pause}
+		msg.post("ball", "pause", msgParam)
+		msg.post("player_left", "pause", msgParam)
+		msg.post("player_right", "pause", msgParam)
+		msg.post("score", "pause", msgParam)
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

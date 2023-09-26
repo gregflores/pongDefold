@@ -34,12 +34,12 @@ function init(self)
 	local rot = vmath.quat_rotation_z(math.random() * 6.2831)
 	local baseDir = vmath.vector3(1,0,0)
 	self.dir = vmath.rotate(rot, baseDir)
-	print(self.dir)
 	self.dir = vmath.normalize(self.dir)
 	self.startSpeed = 250
 	self.speed = self.startSpeed
 	self.startPos = go.get_position()
 	self.scored = false
+	self.pause = false
 
 	self.size = go.get("#sprite", "size")
 	self.ballEdgeY = self.size.y * 0.5
@@ -58,7 +58,7 @@ function final(self)
 end
 
 function update(self, dt)
-	if self.dir and not self.scored then
+	if self.dir and not self.scored and not self.pause then
 		local velocity = self.speed * vmath.normalize(self.dir)
 		local distance = velocity * dt
 		moveBall(self, distance)
@@ -73,6 +73,8 @@ function on_message(self, message_id, message, sender)
 		self.speed = self.speed * 1.05
 	elseif message_id == hash("launch") and self.scored then
 		resetBall(self)
+	elseif message_id == hash("pause") then
+		self.pause = message.pause
 	end
 end
 
