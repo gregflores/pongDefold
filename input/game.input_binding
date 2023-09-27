@@ -26,6 +26,10 @@ key_trigger {
   input: KEY_ESC
   action: "pause_button"
 }
+key_trigger {
+  input: KEY_SPACE
+  action: "launch"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_LEFT
   action: "touch"
