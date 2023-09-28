@@ -1,0 +1,52 @@
+local function movePaddle(self, distance)
+	local pos = go.get_position()
+	pos.y = pos.y + distance
+	if pos.y > (self.bgMaxY - self.paddleEdge) then
+		pos.y = self.bgMaxY - self.paddleEdge
+	elseif pos.y < (self.paddleEdge) then
+		pos.y = self.paddleEdge
+	end
+	go.set_position(pos)
+end
+
+go.property("paddleSpeed", 400)
+
+function init(self)
+	self.id = go.get_id()
+	self.size = go.get("#paddle", "size")
+	self.paddleEdge = self.size.y * 0.5
+	self.bgSize = go.get("/background#background", "size")
+	self.bgMaxY = self.bgSize.y
+	self.dir = 0
+	self.pause = false
+	self.startPos = go.get_position()
+end
+
+function update(self, dt)
+	if not self.pause then
+		local tracker = go.get_position("ball")
+		local curPos = go.get_position()
+		local dif = tracker.y - curPos.y
+		local scale = dif / (self.paddleEdge * 2)
+		if dif > 50 then
+			self.dir = math.min(scale, 1)
+		elseif dif < -50 then
+			self.dir = math.max(scale, -1)
+		end
+		
+		if self.dir then
+			local velocity = self.paddleSpeed * self.dir
+			local distance = velocity * dt
+			movePaddle(self, distance)
+			self.dir = 0
+		end
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("pause") then
+		self.pause = message.pause
+	elseif message_id == hash("score") then
+		go.set_position(self.startPos)
+	end
+end

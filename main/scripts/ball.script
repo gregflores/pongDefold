@@ -26,12 +26,17 @@ function moveBall(self, distance)
 end
 
 function init(self)
-	math.randomseed(1)
-	local rot = vmath.quat_rotation_z(math.random() * 6.2831)
-	local baseDir = vmath.vector3(1,0,0)
+	math.randomseed(os.time())
+	local rot = vmath.quat_rotation_z(math.random() * 3.1415 * 0.5)
+	local baseDir = vmath.vector3(1,-1,0)
 	self.dir = vmath.rotate(rot, baseDir)
+	local side = math.random(-1,1)
+	
+	if side < 0 then
+		self.dir.x = self.dir.x * -1
+	end
 	self.dir = vmath.normalize(self.dir)
-	self.startSpeed = 250
+	self.startSpeed = 350
 	self.speed = self.startSpeed
 	self.startPos = go.get_position()
 	self.scored = true
@@ -63,13 +68,16 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("collision_response") and message.other_group == hash("paddle") then
+		sound.play("main:/sounds#pickup")
 		local yDif = (go.get_position().y - message.other_position.y)
 		self.dir.x = self.dir.x * -1
 		self.dir.y = yDif / self.paddleEdge
 		self.speed = self.speed * 1.05
 	elseif message_id == hash("collision_response") and message.other_group == hash("goal") then
+		sound.play("main:/sounds#explosion")
 		local goalParam = {goalSide = message.other_id}
 		msg.post("score#score", "score", goalParam)
+		msg.post("player_right", "score")
 		self.scored = true
 		resetBall(self, message.other_id)
 	elseif message_id == hash("pause") then

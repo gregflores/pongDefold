@@ -9,6 +9,11 @@ function init(self)
 	self.pvaiButtonAlpha = gui.get_alpha(self.pvaiButtonHighlight)
 	self.pvpButtonColor = gui.get_color(self.pvpButtonHighlight)
 	self.pvaiButtonColor = gui.get_color(self.pvaiButtonHighlight)
+
+	self.powerup = gui.get_node("powerUpButton")
+	self.pickup = gui.get_node("pickupButton")
+	self.explosion = gui.get_node("explosionButton")
+	
 	self.isOverPvp = false
 	self.isOverPvai = false
 	self.active = false
@@ -59,17 +64,25 @@ function on_input(self, action_id, action)
 	if action_id == hash("touch") then 
 		if action.pressed and self.active then
 			if gui.pick_node(self.pvpButton, action.x, action.y) then
+				sound.play("sounds#powerup")
 				gui.set_color(self.pvpButtonHighlight, vmath.vector3(0.7, 0.7, 0.7))
 				msg.post("/loader#loader", "loadPvp")
 				msg.post("#", "hideMainMenu")
 				gui.set_color(self.pvpButtonHighlight, self.pvpButtonColor)
 				gui.set_alpha(self.pvpButtonHighlight, 0.0)
 			elseif gui.pick_node(self.pvaiButton, action.x, action.y) then
+				sound.play("sounds#powerup")
 				gui.set_color(self.pvaiButtonHighlight, vmath.vector3(0.7, 0.7, 0.7))
 				msg.post("/loader#loader", "loadPvai")
 				msg.post("#", "hideMainMenu")
 				gui.set_color(self.pvaiButtonHighlight, self.pvaiButtonColor)
 				gui.set_alpha(self.pvaiButtonHighlight, 0.0)
+			elseif gui.pick_node(self.powerup, action.x, action.y) then
+				sound.play("sounds#powerup")
+			elseif gui.pick_node(self.explosion, action.x, action.y) then
+				sound.play("sounds#explosion")
+			elseif gui.pick_node(self.pickup, action.x, action.y) then
+				sound.play("sounds#pickup")
 			end
 		end
 	end
