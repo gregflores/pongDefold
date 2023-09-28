@@ -37,7 +37,7 @@ instances {
     id: "player"
     properties {
       id: "paddleSpeed"
-      value: "1000.0"
+      value: "400.0"
       type: PROPERTY_TYPE_NUMBER
     }
   }
@@ -65,7 +65,7 @@ instances {
     id: "player"
     properties {
       id: "paddleSpeed"
-      value: "1000.0"
+      value: "400.0"
       type: PROPERTY_TYPE_NUMBER
     }
   }

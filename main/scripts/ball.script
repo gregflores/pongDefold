@@ -1,10 +1,10 @@
-function resetBall(self)
-	local rot = vmath.quat_rotation_z(math.random() * 6.2831)
-	local baseDir = vmath.vector3(1,0,0)
+function resetBall(self, goalSide)
+	local rot = vmath.quat_rotation_z(math.random() * 3.1415 * 0.5)
+	local baseDir = vmath.vector3(1,-1,0)
 	go.set_position(self.startPos)
 	self.dir = vmath.rotate(rot, baseDir)
-	print(self.dir)
 	self.dir = vmath.normalize(self.dir)
+	if goalSide == hash("/goalRight") then self.dir.x = self.dir.x * -1 end
 	self.speed = self.startSpeed
 end
 
@@ -18,13 +18,9 @@ function moveBall(self, distance)
 		pos.y = self.ballEdgeY
 		self.dir.y = self.dir.y * -1
 	elseif pos.x > (self.bgMaxX - self.ballEdgeX) then
-		pos = self.startPos
-		if not self.scored then msg.post("score#score", "player_left_score") end
-		self.scored = true
+		pos.x = self.bgMaxX - self.ballEdgeX
 	elseif pos.x < (self.ballEdgeX) then
-		pos = self.startPos
-		if not self.scored then msg.post("score#score", "player_right_score") end
-		self.scored = true
+		pos.x = self.ballEdgeX
 	end
 	go.set_position(pos)
 end
@@ -38,7 +34,7 @@ function init(self)
 	self.startSpeed = 250
 	self.speed = self.startSpeed
 	self.startPos = go.get_position()
-	self.scored = false
+	self.scored = true
 	self.pause = false
 
 	self.size = go.get("#sprite", "size")
@@ -71,10 +67,15 @@ function on_message(self, message_id, message, sender)
 		self.dir.x = self.dir.x * -1
 		self.dir.y = yDif / self.paddleEdge
 		self.speed = self.speed * 1.05
-	elseif message_id == hash("launch") and self.scored then
-		resetBall(self)
+	elseif message_id == hash("collision_response") and message.other_group == hash("goal") then
+		local goalParam = {goalSide = message.other_id}
+		msg.post("score#score", "score", goalParam)
+		self.scored = true
+		resetBall(self, message.other_id)
 	elseif message_id == hash("pause") then
 		self.pause = message.pause
+	elseif message_id == hash("launch") and self.scored then
+		self.scored = false
 	end
 end
 
